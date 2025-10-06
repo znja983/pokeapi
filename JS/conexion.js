@@ -1,11 +1,10 @@
-let pokemones = [];
-let totalPokes = 3;
+let pokemones = []; //lista de pokemones que llama
+let totalPokes = 1025; //lista de pokemones que trae
 
 // Conexión para obtener la lista de Pokémon
-async function conexionLista(filtrotipo) {
+async function conexionLista(filtrotipo) { //debe esperar a que se ejeccute
 
-  
-  if(filtrotipo == "All"){
+ if(filtrotipo == "All"){
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${totalPokes}`);
     const data = await res.json();
     return data.results;
@@ -18,9 +17,10 @@ async function conexionLista(filtrotipo) {
       pokemonesTipo.push(data.pokemon[i].pokemon);
     }
     return pokemonesTipo;
-  }
-
+  } 
 }
+
+
 
 // Cargar todos los Pokémon al iniciar
 async function General() {
@@ -28,13 +28,13 @@ async function General() {
     pokemones = await conexionLista("All");
   }
   Home();
+  
 }
+General();
 
-General()
-
-async function FiltroConexion(Elfiltro){
+async function FiltroConexion(filtroelegido){
+  const pokesFiltrados = await conexionLista(filtroelegido);
   document.getElementById("la-lista").innerHTML = "";
-  pokemones = await conexionLista(Elfiltro);
-  const listaHTML = generarLista(pokemones);
-  document.getElementById("la-lista").innerHTML = listaHTML;
+  const listaFiltro = generarLista(pokesFiltrados);
+  document.getElementById("la-lista").innerHTML = listaFiltro;
 }

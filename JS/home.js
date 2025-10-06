@@ -33,13 +33,16 @@ function generarLista(arraypokemones) {
 function Home(filtro){
     var root = document.getElementById("root");
     
+    // Limpiar el contenido anterior
+    root.innerHTML = "";
+
     //buscador
     const buscador = document.createElement("input");
     buscador.classList.add("c-buscador");
     buscador.type = "text";
     buscador.placeholder = "Buscar Pokémon...";
     buscador.addEventListener("input", () => {
-            buscadorfuncion(buscador.value);
+        buscadorfuncion(buscador.value);
     });
 
     //contenedor filtro
@@ -55,16 +58,13 @@ function Home(filtro){
     for (let i = 0; i < tipos.length; i++) {
         const btn = document.createElement("button");
         btn.textContent = tipos[i];
-        
         // Agregar el evento click para filtrar por tipo
         btn.addEventListener("click", () => {
             FiltroConexion(tipos[i]); 
         });
-
         // Agregar el botón al contenedor
         contenedorFiltro.appendChild(btn);
     }
-
 
     //add contenedor lista
     const listaHTML = generarLista(pokemones);
