@@ -1,6 +1,6 @@
 var esFavorito = false;
 
-// Función para agregar o quitar un Pokémon de favoritos
+// Función para agregar o quitar un personaje de favoritos
 function toggleFavorito(paramid, paramname) {
 
     // Leer favoritos actuales desde localStorage
@@ -16,13 +16,13 @@ function toggleFavorito(paramid, paramname) {
     }
 
     if (existe == true) {
-        favoritos = favoritos.filter(poke => poke.name !== paramname);
+        favoritos = favoritos.filter(p => p.name !== paramname);
         esFavorito = false;
     } else {
         // Si no está, agregarlo
         favoritos.push({
             name: paramname,
-            url: `https://pokeapi.co/api/v2/pokemon/${paramid}/`
+            id: paramid
         });
         esFavorito = true;
     }
@@ -35,40 +35,36 @@ function toggleFavorito(paramid, paramname) {
     if (boton) boton.textContent = esFavorito ? "❤️" : "🤍";
 }
 
-async function Detalle(parametro) {
+function Detalle(id) {
     const root = document.getElementById("root");
     root.innerHTML = "";
 
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${parametro}`);
-    const data = await res.json();
-
-    // Revisar si este Pokémon ya está en favoritos
-    favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    esFavorito = favoritos.some(poke => poke.name === data.name);
-
-    // Tipos
-    let tipoPoke = "";
-    for (let i = 0; i < data.types.length; i++) {
-        tipoPoke += `<span>${data.types[i].type.name}</span> `;
+    // Buscar el personaje en la base de datos
+    const personaje = baseDatosTrench.find(p => p.id == id);
+    
+    if (!personaje) {
+        root.innerHTML = "<p>Personaje no encontrado</p>";
+        return;
     }
+
+    // Revisar si este personaje ya está en favoritos
+    let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+    esFavorito = favoritos.some(p => p.name === personaje.name);
 
     // HTML del detalle
     const detalle = `
     <section class="c-detalle">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png" 
-           alt="${data.name}" height="120" width="auto">
-      <p>${data.name}</p>
-      <p>ID: ${data.id}</p>
-      <p>${tipoPoke}</p>
-      <p>Altura: ${data.height / 10} m / Peso: ${data.weight / 10} kg</p>
-      <p>HP: ${data.stats[0].base_stat}</p>
-      <p>Velocidad: ${data.stats[5].base_stat}</p>
-      <p>Ataque: ${data.stats[1].base_stat} / Defensa: ${data.stats[2].base_stat}</p>
-      <p>Ataque Especial: ${data.stats[3].base_stat} / Defensa Especial: ${data.stats[4].base_stat}</p>
+      <img src="${personaje.image}" alt="${personaje.name}" class="detalle-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23666%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23fff%22 font-size=%2224%22%3E⚔️%3C/text%3E%3C/svg%3E'">
+      <h2>${personaje.name}</h2>
+      <p><strong>ID:</strong> ${personaje.id}</p>
+      <p><strong>Facción:</strong> <span class="faction-badge">${personaje.faction}</span></p>
+      <p><strong>Rol:</strong> ${personaje.description}</p>
+      <p class="detalle-bio">Lorem ipsum dolor sit amet. Este es un personaje importante en el universo de Trench Crusader con habilidades especializadas.</p>
 
-      <button onClick="toggleFavorito(${data.id}, '${data.name}')">
-        <span id="corazon-${data.id}">${esFavorito ? '❤️' : '🤍'}</span> Favorito
+      <button onClick="toggleFavorito(${personaje.id}, '${personaje.name}')">
+        <span id="corazon-${personaje.id}">${esFavorito ? '❤️' : '🤍'}</span> Agregar a Favoritos
       </button>
+      <button onClick="Home()">Volver</button>
     </section>
   `;
 
