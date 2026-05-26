@@ -100,12 +100,21 @@ async function conexionLista(filtrofaccion) {
 
 // Cargar todos los personajes al iniciar
 async function General() {
+  if (!window.isAuthenticated || !window.isAuthenticated()) {
+    if (typeof window.renderAuthScreen === 'function') {
+      window.renderAuthScreen('login');
+    }
+    return;
+  }
+
   if (personajes.length === 0) {
     personajes = await conexionLista("All");
   }
-  Home();
+
+  if (typeof Home === 'function') {
+    Home();
+  }
 }
-General();
 
 async function FiltroConexion(filtroelegido){
   const personajesFiltrados = await conexionLista(filtroelegido);
